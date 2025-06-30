@@ -10,8 +10,10 @@ from langchain.schema import Document
 
 
 # Directory where the vector database will be stored
-PERSIST_DIR = os.path.join("backend", "data", "chroma")
-PDF_DIR = os.path.join("backend", "data", "pdfs")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PERSIST_DIR = os.path.join(BASE_DIR, "data", "chroma")
+PDF_DIR = os.path.join(BASE_DIR, "data", "pdfs")
+
 
 
 def create_vector_db(pdf_dir: str = PDF_DIR, persist_dir: str = PERSIST_DIR) -> Chroma:
@@ -30,7 +32,7 @@ def create_vector_db(pdf_dir: str = PDF_DIR, persist_dir: str = PERSIST_DIR) -> 
 
     splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
     splits = splitter.split_documents(docs)
-    embeddings = OllamaEmbeddings(model="llama3")
+    embeddings = OllamaEmbeddings(model="deepseek-r1:1.5b")
 
     vectordb = Chroma.from_documents(documents=splits, embedding=embeddings, persist_directory=persist_dir)
     vectordb.persist()
@@ -39,11 +41,11 @@ def create_vector_db(pdf_dir: str = PDF_DIR, persist_dir: str = PERSIST_DIR) -> 
 
 def load_vector_db(persist_dir: str = PERSIST_DIR) -> Chroma:
     """Load an existing Chroma vector database."""
-    embeddings = OllamaEmbeddings(model="llama3")
+    embeddings = OllamaEmbeddings(model="deepseek-r1:1.5b")
     return Chroma(persist_directory=persist_dir, embedding_function=embeddings)
 
 
-def ask_question(question: str, vectorstore: Chroma, model: str = "llama3") -> str:
+def ask_question(question: str, vectorstore: Chroma, model: str = "deepseek-r1:1.5b") -> str:
     """Search the vector DB and query the LLM with context."""
     docs = vectorstore.similarity_search(question, k=3)
     context = "\n\n".join([doc.page_content for doc in docs])
