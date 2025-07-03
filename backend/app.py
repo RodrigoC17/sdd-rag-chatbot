@@ -5,7 +5,7 @@ import os
 
 from rag_utils import create_vector_db, load_vector_db, ask_question, PERSIST_DIR
 
-app = FastAPI(title="SDD RAG Chatbot")
+app = FastAPI(title="Obligatorio Calleros - 232814")
 
 # Enable CORS for development
 app.add_middleware(
